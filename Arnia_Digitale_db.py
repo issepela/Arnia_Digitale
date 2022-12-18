@@ -19,11 +19,14 @@ con.close()
 
 import json
 import datetime
+import base64
 
 x=json.loads(a.payload)
 DT= x['uplink_message']['rx_metadata'][0]['received_at']
 DT=DT.split(".")[0].replace("T"," ")
 V= x['uplink_message']['f_cnt']
+V2=x['uplink_message']['frm_payload']
+V2=int(base64.b64decode(V2))
 Arnia=x['end_device_ids']['device_id']
 
 
@@ -32,7 +35,7 @@ res=con.execute("select id from ARNIE where device_id='eui-a8610a33342c6815'")
 id_arnia=res.fetchall()[0][0]
 
 con = sqlite3.connect('Arnia_Digitale.db')
-sqlstr = "INSERT INTO Test_data(Arnia,Time,Valore) values({},'{}', {});".format(id_arnia, DT,V)
+sqlstr = "INSERT INTO Test_data(Arnia,Time,Valore) values({},'{}', {});".format(id_arnia, DT,V2)
 res=con.execute(sqlstr)
 con.commit()
 
